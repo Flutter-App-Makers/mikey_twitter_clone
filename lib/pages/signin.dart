@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:mikey_twitter_clone/pages/signup.dart';
 
@@ -9,6 +10,8 @@ class SignIn extends StatefulWidget {
 }
 
 class _SignInState extends State<SignIn> {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final GlobalKey<FormState> _signInKey = GlobalKey<FormState>();
@@ -98,11 +101,18 @@ class _SignInState extends State<SignIn> {
                 onPressed: () async {
                   if (_signInKey.currentState!.validate()) {
                     try {
-                      debugPrint('Email: ${emailController.text}');
-                      debugPrint('Password: ${passwordController.text}');
+                      await _auth.signInWithEmailAndPassword(
+                        email: emailController.text,
+                        password: passwordController.text,
+                      );
                     } catch (e) {
-                      ScaffoldMessenger.of(context)
-                          .showSnackBar(SnackBar(content: Text(e.toString())));
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            e.toString(),
+                          ),
+                        ),
+                      );
                     }
                   }
                 },

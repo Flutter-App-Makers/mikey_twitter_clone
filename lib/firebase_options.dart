@@ -83,4 +83,5 @@ class DefaultFirebaseOptions {
     authDomain: 'perfectly-plump-plums.firebaseapp.com',
     storageBucket: 'perfectly-plump-plums.firebasestorage.app',
   );
+
 }

@@ -1,4 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:mikey_twitter_clone/models/user.dart';
 
 class SignUp extends StatefulWidget {
   const SignUp({super.key});
@@ -8,6 +11,9 @@ class SignUp extends StatefulWidget {
 }
 
 class _SignUpState extends State<SignUp> {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final GlobalKey<FormState> _signUpKey = GlobalKey<FormState>();
@@ -97,11 +103,23 @@ class _SignUpState extends State<SignUp> {
                 onPressed: () async {
                   if (_signUpKey.currentState!.validate()) {
                     try {
-                      debugPrint('Email: ${emailController.text}');
-                      debugPrint('Password: ${passwordController.text}');
+                      await _auth.createUserWithEmailAndPassword(
+                        email: emailController.text,
+                        password: passwordController.text,
+                      );
+                      await _firestore.collection("users").add(
+                            FirebaseUser(email: emailController.text).toMap(),
+                          );
+                      if (!mounted) return;
+                      Navigator.pop(context);
                     } catch (e) {
-                      ScaffoldMessenger.of(context)
-                          .showSnackBar(SnackBar(content: Text(e.toString())));
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            e.toString(),
+                          ),
+                        ),
+                      );
                     }
                   }
                 },
